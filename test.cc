@@ -28,7 +28,6 @@ int main()
     Network dnn1 = dnnNetwork_CPU();
     Network dnn2 = dnnNetwork_GPU();
 
-    MNIST dataset("./data/fashion/");
     dataset.read();
     int n_train = dataset.train_data.cols();
     int dim_in = dataset.train_data.rows();
