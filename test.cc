@@ -24,7 +24,9 @@
 int main()
 {
     GPU_Support gpu_support;
-    gpu_support.printDeviceInfo();
+    MNIST dataset("./data/fashion/");
+    Network dnn1 = dnnNetwork_CPU();
+    Network dnn2 = dnnNetwork_GPU();
 
     MNIST dataset("./data/fashion/");
     dataset.read();
@@ -32,4 +34,17 @@ int main()
     int dim_in = dataset.train_data.rows();
     std::cout << "mnist train number: " << n_train << std::endl;
     std::cout << "mnist test number: " << dataset.test_labels.cols() << std::endl;
+    float accuracy = 0.0;
+
+    std::cout << "CPU" << std::endl;
+    dnn1.load_parameters("./model/weights-cpu-trained.bin");
+    dnn1.forward(dataset.test_data);
+    accuracy = compute_accuracy(dnn1.output(), dataset.test_labels);
+    std::cout << "test accuracy: " << accuracy << std::endl;
+
+    std::cout << "GPU" << std::endl;
+    dnn2.load_parameters("./model/weights-cpu-trained.bin");
+    dnn2.forward(dataset.test_data);
+    accuracy = compute_accuracy(dnn2.output(), dataset.test_labels);
+    std::cout << "test accuracy: " << accuracy << std::endl;
 }
