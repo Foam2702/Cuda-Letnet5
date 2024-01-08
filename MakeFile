@@ -9,11 +9,13 @@ test_model: test
 
 
 
-train: demo.o 
+demo: demo.o 
 	nvcc -arch=sm_75 -o demo -lm -lcuda -lrt demo.o src/network.o src/mnist.o src/layer/*.o src/loss/*.o src/optimizer/*.o src/layer/custom/*.o -I./ -L/usr/local/cuda/lib64 -lcudart
 
-train.o: demo.cc
+demo.o: demo.cc
 	nvcc -arch=sm_75 --compile demo.cc -I./ -L/usr/local/cuda/lib64 -lcudart
 
-train_model: train
-	./train
+demo_model: demo
+	./demo
+
+
