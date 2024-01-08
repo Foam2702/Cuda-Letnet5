@@ -4,14 +4,14 @@
 
 void Conv_GPU::init()
 {
-    params.height_out = (1 + (params.height_in - params.height_kernel + 2 * params.pad_h) / params.stride);
-    params.width_out = (1 + (params.width_in - params.width_kernel + 2 * params.pad_w) / params.stride);
-    params.dim_out = params.height_out * params.width_out * params.channel_out;
+    height_out = (1 + (height_in - height_kernel + 2 * pad_h) / stride);
+    width_out = (1 + (width_in - width_kernel + 2 * pad_w) / stride);
+    dim_out = height_out * width_out * channel_out;
 
-    weight.resize(params.channel_in * params.height_kernel * params.width_kernel, params.channel_out);
-    bias.resize(params.channel_out);
-    grad_weight.resize(params.channel_in * params.height_kernel * params.width_kernel, params.channel_out);
-    grad_bias.resize(params.channel_out);
+    weight.resize(channel_in * height_kernel * width_kernel, channel_out);
+    bias.resize(channel_out);
+    grad_weight.resize(channel_in * height_kernel * width_kernel, channel_out);
+    grad_bias.resize(channel_out);
     set_normal_random(weight.data(), weight.size(), 0, 0.01);
     set_normal_random(bias.data(), bias.size(), 0, 0.01);
     // std::cout << weight.colwise().sum() << std::endl;
@@ -21,13 +21,13 @@ void Conv_GPU::init()
 void Conv_GPU::forward(const Matrix &bottom)
 {
     int n_sample = bottom.cols();
-    top.resize(params.height_out * params.width_out * params.channel_out, n_sample);
+    top.resize(height_out * width_out * channel_out, n_sample);
     float *input_data = (float *)bottom.data();
     float *output_data = (float *)top.data();
     float *weight_data = (float *)weight.data();
 
     GPUInterface gpuInterface;
-    std::cout << "Convolution c" << params.channel_in << " - GPU";
+    std::cout << "Convolution c" << channel_in << " - GPU";
 
     // Launch marker kernel to aid with student function timing
     // gpuInterface.insert_pre_barrier_kernel();
@@ -36,8 +36,8 @@ void Conv_GPU::forward(const Matrix &bottom)
     GpuTimer timer;
     timer.Start();
     gpuInterface.executeConvolutionForwardFull(output_data, input_data, weight_data,
-                                               n_sample, params.channel_out, params.channel_in,
-                                               params.height_in, params.width_in, params.height_kernel);
+                                               n_sample, channel_out, channel_in,
+                                               height_in, width_in, height_kernel);
 
     // Stop layer timer
     timer.Stop();
@@ -54,32 +54,32 @@ void Conv_GPU::forward(const Matrix &bottom)
 // data_col size: Matrix (hw_out, hw_kernel * channel_in)
 void Conv_GPU::im2col(const Vector &image, Matrix &data_col)
 {
-    int hw_in = params.height_in * params.width_in;
-    int hw_kernel = params.height_kernel * params.width_kernel;
-    int hw_out = params.height_out * params.width_out;
+    int hw_in = height_in * width_in;
+    int hw_kernel = height_kernel * width_kernel;
+    int hw_out = height_out * width_out;
     // im2col
-    data_col.resize(hw_out, hw_kernel * params.channel_in);
-    for (int c = 0; c < params.channel_in; c++)
+    data_col.resize(hw_out, hw_kernel * channel_in);
+    for (int c = 0; c < channel_in; c++)
     {
         Vector map = image.block(hw_in * c, 0, hw_in, 1); // c-th channel map
         for (int i = 0; i < hw_out; i++)
         {
-            int step_h = i / params.width_out;
-            int step_w = i % params.width_out;
-            int start_idx = step_h * params.width_in * params.stride + step_w * params.stride; // left-top idx of window
+            int step_h = i / width_out;
+            int step_w = i % width_out;
+            int start_idx = step_h * width_in * stride + step_w * stride; // left-top idx of window
             for (int j = 0; j < hw_kernel; j++)
             {
-                int cur_col = start_idx % params.width_in + j % params.width_kernel - params.pad_w; // col after padding
-                int cur_row = start_idx / params.width_in + j / params.width_kernel - params.pad_h;
-                if (cur_col < 0 || cur_col >= params.width_in || cur_row < 0 ||
-                    cur_row >= params.height_in)
+                int cur_col = start_idx % width_in + j % width_kernel - pad_w; // col after padding
+                int cur_row = start_idx / width_in + j / width_kernel - pad_h;
+                if (cur_col < 0 || cur_col >= width_in || cur_row < 0 ||
+                    cur_row >= height_in)
                 {
                     data_col(i, c * hw_kernel + j) = 0;
                 }
                 else
                 {
                     // int pick_idx = start_idx + (j / width_kernel) * width_in + j % width_kernel;
-                    int pick_idx = cur_row * params.width_in + cur_col;
+                    int pick_idx = cur_row * width_in + cur_col;
                     data_col(i, c * hw_kernel + j) = map(pick_idx); // pick which pixel
                 }
             }
@@ -89,32 +89,32 @@ void Conv_GPU::im2col(const Vector &image, Matrix &data_col)
 
 void Conv_GPU::col2im(const Matrix &data_col, Vector &image)
 {
-    int hw_in = params.height_in * params.width_in;
-    int hw_kernel = params.height_kernel * params.width_kernel;
-    int hw_out = params.height_out * params.width_out;
+    int hw_in = height_in * width_in;
+    int hw_kernel = height_kernel * width_kernel;
+    int hw_out = height_out * width_out;
     // col2im
-    image.resize(hw_in * params.channel_in);
+    image.resize(hw_in * channel_in);
     image.setZero();
-    for (int c = 0; c < params.channel_in; c++)
+    for (int c = 0; c < channel_in; c++)
     {
         for (int i = 0; i < hw_out; i++)
         {
-            int step_h = i / params.width_out;
-            int step_w = i % params.width_out;
-            int start_idx = step_h * params.width_in * params.stride + step_w * params.stride; // left-top idx of window
+            int step_h = i / width_out;
+            int step_w = i % width_out;
+            int start_idx = step_h * width_in * stride + step_w * stride; // left-top idx of window
             for (int j = 0; j < hw_kernel; j++)
             {
-                int cur_col = start_idx % params.width_in + j % params.width_kernel - params.pad_w; // col after padding
-                int cur_row = start_idx / params.width_in + j / params.width_kernel - params.pad_h;
-                if (cur_col < 0 || cur_col >= params.width_in || cur_row < 0 ||
-                    cur_row >= params.height_in)
+                int cur_col = start_idx % width_in + j % width_kernel - pad_w; // col after padding
+                int cur_row = start_idx / width_in + j / width_kernel - pad_h;
+                if (cur_col < 0 || cur_col >= width_in || cur_row < 0 ||
+                    cur_row >= height_in)
                 {
                     continue;
                 }
                 else
                 {
                     // int pick_idx = start_idx + (j / width_kernel) * width_in + j % width_kernel;
-                    int pick_idx = cur_row * params.width_in + cur_col;
+                    int pick_idx = cur_row * width_in + cur_col;
                     image(c * hw_in + pick_idx) += data_col(i, c * hw_kernel + j); // pick which pixel
                 }
             }
@@ -127,14 +127,14 @@ void Conv_GPU::backward(const Matrix &bottom, const Matrix &grad_top)
     int n_sample = bottom.cols();
     grad_weight.setZero();
     grad_bias.setZero();
-    grad_bottom.resize(params.height_in * params.width_in * params.channel_in, n_sample);
+    grad_bottom.resize(height_in * width_in * channel_in, n_sample);
     grad_bottom.setZero();
     for (int i = 0; i < n_sample; i++)
     {
         // im2col of grad_top
         Matrix grad_top_i = grad_top.col(i);
         Matrix grad_top_i_col = Eigen::Map<Matrix>(grad_top_i.data(),
-                                                   params.height_out * params.width_out, params.channel_out);
+                                                   height_out * width_out, channel_out);
         // d(L)/d(w) = \sum{ d(L)/d(z_i) * d(z_i)/d(w) }
         grad_weight += data_cols[i].transpose() * grad_top_i_col;
         // d(L)/d(b) = \sum{ d(L)/d(z_i) * d(z_i)/d(b) }
