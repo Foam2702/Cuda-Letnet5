@@ -35,9 +35,9 @@ void Conv_GPU::forward(const Matrix &bottom)
     // Start layer timer
     GpuTimer timer;
     timer.Start();
-    gpuInterface.executeConvolutionForwardFull(output_data, input_data, weight_data,
-                                               n_sample, channel_out, channel_in,
-                                               height_in, width_in, height_kernel);
+    gpuInterface.conv_forward_optimize(output_data, input_data, weight_data,
+                                       n_sample, channel_out, channel_in,
+                                       height_in, width_in, height_kernel);
 
     // Stop layer timer
     timer.Stop();

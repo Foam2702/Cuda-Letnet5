@@ -16,9 +16,9 @@ struct ConvParams
 class GPUInterface
 {
 public:
-    void executeConvolutionForwardFull(float *output_data, const float *input_data, const float *weight_data,
-                                       const int num_samples, const int output_channel, const int input_channel,
-                                       const int height, const int width, const int kernel_size);
+    void conv_forward_optimize(float *output_data, const float *input_data, const float *weight_data,
+                               const int num_samples, const int output_channel, const int input_channel,
+                               const int height, const int width, const int kernel_size);
 };
 
 #endif
