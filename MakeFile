@@ -68,7 +68,8 @@ optimizer: src/optimizer/sgd.cc
 
 clean:
 	rm -f infoGPU demo main demo test
-	rm -f .o src/.o src/layer/*.o src/loss/*.o src/optimizer/*.o src/layer/parallel/*.o
+	rm -f *.o src/*.o src/layer/*.o src/loss/*.o src/optimizer/*.o src/layer/parallel/*.o
+
 
 setup:
 	make network.o
