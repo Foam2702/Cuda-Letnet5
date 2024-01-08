@@ -1,4 +1,4 @@
-#include "./gpu-new-forward.h"
+#include "./conv_forward.h"
 #include <cmath>
 #include <iostream>
 
@@ -32,22 +32,27 @@ __global__ void conv_forward_kernel(float *output, const float *input, const int
                 {
                     int input_row = row_idx + kernel_row;
                     int input_col = col_idx + kernel_col;
-                    accumulator += input[(batch_idx * (input_channel * height * width)) +
-                                         (input_channel_idx * (height * width)) +
-                                         (input_row * width) +
-                                         input_col] *
-                                   dc_filter[(output_feature_idx * (input_channel * kernel_size * kernel_size)) +
-                                             (input_channel_idx * (kernel_size * kernel_size)) +
-                                             (kernel_row * kernel_size) +
-                                             kernel_col];
+
+                    float input_base_idx = batch_idx * (input_channel * height * width) + input_channel_idx * (height * width);
+                    float input_idx = input_base_idx + input_row * width + input_col;
+                    float filter_base_idx = output_feature_idx * (input_channel * kernel_size * kernel_size) + input_channel_idx * (kernel_size * kernel_size);
+                    float filter_idx = filter_base_idx + kernel_row * kernel_size + kernel_col;
+
+                    accumulator += input[input_idx] * dc_filter[filter_idx];
                 }
             }
         }
-        output[(batch_idx * (output_channel * height_out * width_out)) +
-               (output_feature_idx * (height_out * width_out)) +
-               (row_idx * width_out) +
-               col_idx] = accumulator;
-    } // endif (row_idx < height_out && col_idx < width_out)
+        if (row_idx < height_out && col_idx < width_out)
+        {
+
+            float output_batch_offset = batch_idx * output_channel * height_out * width_out;
+            float output_channel_offset = output_feature_idx * height_out * width_out;
+            float output_row_offset = row_idx * width_out;
+            float output_index = output_batch_offset + output_channel_offset + output_row_offset + col_idx;
+
+            output[output_index] = accumulator;
+        }
+    }
 }
 
 __host__ void GPUInterface::conv_forward_gpu_full(float *output_data, const float *input_data, const float *weight_data,
