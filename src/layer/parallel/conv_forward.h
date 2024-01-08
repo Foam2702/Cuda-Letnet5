@@ -1,5 +1,5 @@
-#ifndef SRC_LAYER_PARALLEL_CONV_FORWARD_H
-#define SRC_LAYER_PARALLEL_CONV_FORWARD_H
+#ifndef PARALLEL_CONV_FORWARD_H
+#define PARALLEL_CONV_FORWARD_H
 #pragma once
 
 #include "./gpu_support.h"
@@ -16,7 +16,7 @@ struct ConvParams
 class GPUInterface
 {
 public:
-    void conv_forward_gpu_full(float *output_data, const float *input_data, const float *weight_data, const ConvParams params);
+    void executeConvolutionForwardFull(float *output_data, const float *input_data, const float *weight_data, const ConvParams params);
 };
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef SRC_LAYER_PARALLEL_GPU_SUPPORT_H
-#define SRC_LAYER_PARALLEL_GPU_SUPPORT_H
+#ifndef PARALLEL_GPU_SUPPORT_H
+#define PARALLEL_GPU_SUPPORT_H
 #pragma once
 
 #include <stdio.h>

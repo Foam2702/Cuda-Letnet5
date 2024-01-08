@@ -12,7 +12,7 @@ __device__ int calculateIndex(int batch_idx, int channel_idx, int row_idx, int c
            col_idx;
 }
 
-__global__ void conv_forward_kernel(float *output, const float *input, const float *kernel, const ConvParams params)
+__global__ void convolutionForwardKernel(float *output, const float *input, const float *kernel, const ConvParams params)
 {
     const int height_out = params.height - params.kernel_size + 1;
     const int width_out = params.width - params.kernel_size + 1;
@@ -47,7 +47,7 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
     }
 }
 
-void GPUInterface::conv_forward_gpu_full(float *output_data, const float *input_data, const float *weight_data, const ConvParams params)
+void GPUInterface::executeConvolutionForwardFull(float *output_data, const float *input_data, const float *weight_data, const ConvParams params)
 {
     std::cout << ". Not Optimize:\n";
     const int height_out = params.height - params.kernel_size + 1;
@@ -71,7 +71,7 @@ void GPUInterface::conv_forward_gpu_full(float *output_data, const float *input_
     // Launch the kernel
     GpuTimer time_kernel;
     time_kernel.Start();
-    conv_forward_kernel<<<num_blocks_in_grid, num_threads_per_block>>>(device_output, device_input, device_weight, params);
+    convolutionForwardKernel<<<num_blocks_in_grid, num_threads_per_block>>>(device_output, device_input, device_weight, params);
     time_kernel.Stop();
     float time_kernel_ms = time_kernel.Elapsed();
     std::cout << "\t - Kernel Time: " << time_kernel_ms << " ms" << std::endl;
