@@ -2,7 +2,7 @@
 #define PARALLEL_CONV_FORWARD_H
 #pragma once
 
-#include "./gpu_support.h"
+#include "gpu_support.h"
 struct ConvParams
 {
     int num_samples;
