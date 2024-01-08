@@ -2,7 +2,6 @@
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
-#include "conv_parallel.h"
 
 void Conv::init()
 {
