@@ -47,14 +47,14 @@ layer: src/layer/conv.cc src/layer/ave_pooling.cc src/layer/fully_connected.cc s
 
 custom0: 
 	rm -f src/layer/parallel/*.o
-	nvcc -arch=sm_75 --compile src/layer/parallel/gpu-support.cu -o src/layer/parallel/gpu-support.o -I./ -L/usr/local/cuda/lib64 -lcudart 
+	nvcc -arch=sm_75 --compile src/layer/parallel/gpu_support.cu -o src/layer/parallel/gpu_support.o -I./ -L/usr/local/cuda/lib64 -lcudart 
 	nvcc -arch=sm_75 --compile src/layer/parallel/conv_forward.cu -o src/layer/parallel/conv_forward.o -I./ -L/usr/local/cuda/lib64 -lcudart
 
 # ---------------------------------------------
 # An:
 custom1: 
 	rm -f src/layer/parallel/*.o
-	nvcc -arch=sm_75 --compile src/layer/parallel/gpu-support.cu -o src/layer/parallel/gpu-support.o -I./ -L/usr/local/cuda/lib64 -lcudart 
+	nvcc -arch=sm_75 --compile src/layer/parallel/gpu_support.cu -o src/layer/parallel/gpu_support.o -I./ -L/usr/local/cuda/lib64 -lcudart 
 	nvcc -arch=sm_75 --compile src/layer/parallel/conv_forward_optimize.cu -o src/layer/parallel/conv_forward_optimize.o -I./ -L/usr/local/cuda/lib64 -lcudart
 
 # ---------------------------------------------
