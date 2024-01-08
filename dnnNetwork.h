@@ -54,6 +54,7 @@ Network dnnNetwork_CPU()
 
 Network dnnNetwork_GPU()
 {
+
     Network dnn2;
     Layer *conv1 = new Conv_GPU(1, 28, 28, 6, 5, 5);
     Layer *pool1 = new MaxPooling(6, 24, 24, 2, 2, 2);

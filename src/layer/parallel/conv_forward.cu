@@ -48,8 +48,8 @@ __global__ void convolutionForwardKernel(float *output, const float *input, cons
     }
 }
 
-void GPUInterface::executeConvolutionForwardFull(float *output_data, const float *input_data, const float *weight_data, const int num_samples, const int output_channel, const int input_channel,
-                                                 const int height, const int width, const int kernel_size)
+void GPUInterface::conv_forward_optimize(float *output_data, const float *input_data, const float *weight_data, const int num_samples, const int output_channel, const int input_channel,
+                                         const int height, const int width, const int kernel_size)
 {
     std::cout << ". Not Optimize:\n";
     const int height_out = height - kernel_size + 1;
