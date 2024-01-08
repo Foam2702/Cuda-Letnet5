@@ -1,4 +1,4 @@
-#include "gpu-support.h"
+#include "gpu_support.h"
 
 char *GPU_Support::concatStr(const char *s1, const char *s2)
 {

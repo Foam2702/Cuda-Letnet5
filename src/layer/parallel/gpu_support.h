@@ -53,3 +53,12 @@ struct GpuTimer
         return elapsed;
     }
 };
+
+class GPU_Support
+{
+public:
+    char *concatStr(const char *s1, const char *s2);
+    void printDeviceInfo();
+};
+
+#endif
