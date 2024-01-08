@@ -1,7 +1,7 @@
 #ifndef SRC_LAYER_H_
 #define SRC_LAYER_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 #include "./utils.h"
 #include "./optimizer.h"
