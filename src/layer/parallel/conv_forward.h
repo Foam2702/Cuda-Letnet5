@@ -16,7 +16,7 @@ struct ConvParams
 class GPUInterface
 {
 public:
-    void conv_forward_gpu_full(float *output_data, const float *input_data, const float *weight_data, const ConvParams params);
+    void conv_forward_optimize(float *output_data, const float *input_data, const float *weight_data, const ConvParams params);
 };
 
 #endif
