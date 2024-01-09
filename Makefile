@@ -1,9 +1,9 @@
 ##############################################################################
-test.o: test.cc
-	nvcc -arch=sm_75 --compile test.cc -I./ -L/usr/local/cuda/lib64 -lcudart
 
 test: test.o
 	nvcc -arch=sm_75 -o test -lm -lcuda -lrt test.o src/network.o src/mnist.o src/layer/*.o src/loss/*.o src/optimizer/*.o src/layer/parallel/*.o -I./ -L/usr/local/cuda/lib64 -lcudart
+test.o: test.cc
+	nvcc -arch=sm_75 --compile test.cc -I./ -L/usr/local/cuda/lib64 -lcudart
 
 test_model: test
 	./test
@@ -44,31 +44,30 @@ layer: src/layer/conv.cc src/layer/ave_pooling.cc src/layer/fully_connected.cc s
 	nvcc -arch=sm_75 --compile src/layer/relu.cc -o src/layer/relu.o -I./ -L/usr/local/cuda/lib64 -lcudart
 	nvcc -arch=sm_75 --compile src/layer/sigmoid.cc -o src/layer/sigmoid.o -I./ -L/usr/local/cuda/lib64 -lcudart
 	nvcc -arch=sm_75 --compile src/layer/softmax.cc -o src/layer/softmax.o -I./ -L/usr/local/cuda/lib64 -lcudart
+loss: src/loss/cross_entropy_loss.cc src/loss/mse_loss.cc
+	nvcc -arch=sm_75 --compile src/loss/cross_entropy_loss.cc -o src/loss/cross_entropy_loss.o -I./ -L/usr/local/cuda/lib64 -lcudart
+	nvcc -arch=sm_75 --compile src/loss/mse_loss.cc -o src/loss/mse_loss.o -I./ -L/usr/local/cuda/lib64 -lcudart
+optimizer: src/optimizer/sgd.cc
+	nvcc -arch=sm_75 --compile src/optimizer/sgd.cc -o src/optimizer/sgd.o -I./ -L/usr/local/cuda/lib64 -lcudart
+clean:
+	rm -f infoGPU demo main demo test
+	rm -f *.o src/*.o src/layer/*.o src/loss/*.o src/optimizer/*.o src/layer/parallel/*.o
 
-custom0: 
+
+custom_v0: 
 	rm -f src/layer/parallel/*.o
 	nvcc -arch=sm_75 --compile src/layer/parallel/gpu_support.cu -o src/layer/parallel/gpu_support.o -I./ -L/usr/local/cuda/lib64 -lcudart 
 	nvcc -arch=sm_75 --compile src/layer/parallel/conv_forward.cu -o src/layer/parallel/conv_forward.o -I./ -L/usr/local/cuda/lib64 -lcudart
 
-# ---------------------------------------------
-# An:
-custom1: 
+
+custom_v1: 
 	rm -f src/layer/parallel/*.o
 	nvcc -arch=sm_75 --compile src/layer/parallel/gpu_support.cu -o src/layer/parallel/gpu_support.o -I./ -L/usr/local/cuda/lib64 -lcudart 
 	nvcc -arch=sm_75 --compile src/layer/parallel/conv_forward_optimize.cu -o src/layer/parallel/conv_forward_optimize.o -I./ -L/usr/local/cuda/lib64 -lcudart
 
 # ---------------------------------------------
 
-loss: src/loss/cross_entropy_loss.cc src/loss/mse_loss.cc
-	nvcc -arch=sm_75 --compile src/loss/cross_entropy_loss.cc -o src/loss/cross_entropy_loss.o -I./ -L/usr/local/cuda/lib64 -lcudart
-	nvcc -arch=sm_75 --compile src/loss/mse_loss.cc -o src/loss/mse_loss.o -I./ -L/usr/local/cuda/lib64 -lcudart
 
-optimizer: src/optimizer/sgd.cc
-	nvcc -arch=sm_75 --compile src/optimizer/sgd.cc -o src/optimizer/sgd.o -I./ -L/usr/local/cuda/lib64 -lcudart
-
-clean:
-	rm -f infoGPU demo main demo test
-	rm -f *.o src/*.o src/layer/*.o src/loss/*.o src/optimizer/*.o src/layer/parallel/*.o
 
 setup:
 	make network.o
