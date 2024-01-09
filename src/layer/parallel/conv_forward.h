@@ -3,16 +3,6 @@
 #pragma once
 
 #include "./gpu_support.h"
-struct ConvParams
-{
-    int num_samples;
-    int output_channel;
-    int input_channel;
-    int height;
-    int width;
-    int kernel_size;
-};
-
 class GPUInterface
 {
 public:

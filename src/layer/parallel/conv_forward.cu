@@ -1,4 +1,4 @@
-#include "./conv_forward.h"
+#include "conv_forward.h"
 #include <cmath>
 #include <iostream>
 
