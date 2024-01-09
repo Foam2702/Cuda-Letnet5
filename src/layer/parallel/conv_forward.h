@@ -1,7 +1,6 @@
 #ifndef PARALLEL_CONV_FORWARD_H
 #define PARALLEL_CONV_FORWARD_H
 #pragma once
-
 #include "./gpu_support.h"
 class GPUInterface
 {
