@@ -36,7 +36,7 @@ int main()
     float accuracy = 0.0;
 
     std::cout << "CPU" << std::endl;
-    dnn1.load_parameters("./model/weights-cpu-trained.bin");
+    dnn1.load_parameters("./model/weight_model.bin");
     dnn1.forward(dataset.test_data);
     accuracy = compute_accuracy(dnn1.output(), dataset.test_labels);
     std::cout << "test accuracy: " << accuracy << std::endl;
