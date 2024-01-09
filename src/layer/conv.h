@@ -3,7 +3,8 @@
 
 #include <vector>
 #include "../layer.h"
-
+#include <chrono>
+#include "./parallel/gpu_support.h"
 class Conv : public Layer
 {
 private:

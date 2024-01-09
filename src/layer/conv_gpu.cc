@@ -26,25 +26,30 @@ void Conv_GPU::forward(const Matrix &bottom)
     float *output_data = (float *)top.data();
     float *weight_data = (float *)weight.data();
 
+    const int num_samples = n_sample;
+    const int input_channel = channel_in;
+    const int output_channel = channel_out;
+    const int kernel_height = height_kernel;
     GPUInterface gpuInterface;
-    std::cout << "Convolution c" << channel_in << " - GPU";
+    if (input_channel == 1)
+        std::cout << "Convolution c1 - GPU";
+    else
+        std::cout << "Convolution c3 - GPU";
 
     // Launch marker kernel to aid with student function timing
-    // gpuInterface.insert_pre_barrier_kernel();
 
     // Start layer timer
     GpuTimer timer;
     timer.Start();
     gpuInterface.conv_forward_optimize(output_data, input_data, weight_data,
-                                       n_sample, channel_out, channel_in,
-                                       height_in, width_in, height_kernel);
+                                       num_samples, output_channel, input_channel,
+                                       height_in, width_in, kernel_height);
 
     // Stop layer timer
     timer.Stop();
     float duration_layer = timer.Elapsed();
 
     // Launch barrier kernel to aid with timing with nsight-compute
-    // gpuInterface.insert_post_barrier_kernel();
 
     std::cout << "\t - Layer Time: " << duration_layer << " ms" << std::endl;
 }
