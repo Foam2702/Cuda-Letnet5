@@ -69,7 +69,8 @@ void MNIST::read_mnist_label(std::string filename, Matrix &labels)
 
 void MNIST::read()
 {
-  std::string data_dir = "/content/drive/MyDrive/Laptrinhsongsong/FinalProject/mini-dnn-cpp/data/mnist/";
+  std::string data_dir = "./data/mnist/";
+
   read_mnist_data(data_dir + "train-images-idx3-ubyte", train_data);
   read_mnist_data(data_dir + "t10k-images-idx3-ubyte", test_data);
   read_mnist_label(data_dir + "train-labels-idx1-ubyte", train_labels);

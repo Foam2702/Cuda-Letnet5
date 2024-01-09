@@ -24,7 +24,7 @@
 int main()
 {
     GPU_Support gpu_support;
-    MNIST dataset("./data/fashion/");
+    MNIST dataset("./data/mnist/");
     Network dnn1 = dnnNetwork_CPU();
     Network dnn2 = dnnNetwork_GPU();
 
