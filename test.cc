@@ -43,7 +43,7 @@ int main()
     std::cout << "test accuracy: " << accuracy << std::endl;
 
     std::cout << "GPU" << std::endl;
-    dnn2.load_parameters("./model/weight_model.bin");
+    dnn2.load_parameters("./model/weight_model_cpu.bin");
     std::cout << "\nOKE\n";
     dnn2.forward(dataset.test_data);
     accuracy = compute_accuracy(dnn2.output(), dataset.test_labels);
