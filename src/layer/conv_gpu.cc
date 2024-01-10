@@ -32,9 +32,9 @@ void Conv_GPU::forward(const Matrix &bottom)
     const int kernel_height = height_kernel;
     GPUInterface gpuInterface;
     if (input_channel == 1)
-        std::cout << "Convolution c1 - GPU";
+        std::cout << "Conv1 - GPU";
     else
-        std::cout << "Convolution c3 - GPU";
+        std::cout << "Conv3 - GPU";
 
     // Launch marker kernel to aid with student function timing
 
