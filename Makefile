@@ -68,7 +68,6 @@ custom_v1:
 # ---------------------------------------------
 
 
-
 setup:
 	make network.o
 	make mnist.o
