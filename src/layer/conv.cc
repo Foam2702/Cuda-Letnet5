@@ -64,9 +64,9 @@ void Conv::forward(const Matrix &bottom)
   top.resize(height_out * width_out * channel_out, n_sample);
   data_cols.resize(n_sample);
   if (channel_in == 1)
-    std::cout << "Conv1 - CPU:" << std::endl;
+    std::cout << "Convolution c1 - CPU:" << std::endl;
   else
-    std::cout << "Conv3 - CPU:" << std::endl;
+    std::cout << "Convolution c3 - CPU:" << std::endl;
   GpuTimer timer;
   timer.Start();
   for (int i = 0; i < n_sample; i++)
